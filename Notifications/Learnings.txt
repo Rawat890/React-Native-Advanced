@@ -1,0 +1,53 @@
+What are local and remote notifications ? 
+Local notifications are triggered by the application installed on the device. They are created and handled by the device in which the app is installed. 
+Push or remote notifications are sent to the applications that are running to other devices. There can be million of devices, so they are generally pushed by remote cloud servers like FCM.
+
+When targeting the mobile devices the application have to interact with multiple gateways to send  push notification.
+
+Here is the architecture of the push notifications
+1. DEVICE REGISTRATION
+App prompts in the device in which it is installed for the permission to send the notifications.Specifically for ios
+(a)Device Token generation
+ios - here the app connects to the APNS - Apple Push notifications server and get the pushToken that is required to push notifications
+android - here app registers with the FCM Firebase cloud service and get Token
+(b) The token then received by app os send to the backend server, and it stores them in db, to identify the devices to which the notifications has to be sent
+
+2. Notification triggered
+Event trigger notification- like event , alert etc. and server determines via the tokens to which devices the notification to be displayed
+Payload- server format the notification payload
+
+3. Notification delivery
+Server sends the payload to the servers APNS and the FCM via http request.
+ios - with the authentication certificate, payload and Token
+android- with the server key, payload and Token
+The servers then validate the requests and routes the notification to the device
+
+4. Device handling - client side
+OS receives notification via servers
+ios processes it and displays
+App handle notification is all modes
+
+5. Additional steps
+Token refresh updates - app must check for tokens, delivery tracking and user choice
+
+local Notification-
+1. Schedule notifications
+function scheduleNotifications(){
+  Notifications.scheduleNotificationsAsync({
+    content :{},
+    trigger:{}
+  })
+}
+
+2. setNotificationHandler - responsible whether to be displayed to user or not
+function handleNotifications(){
+  Notifications.setNotificationHandler({
+    handleNotification:async (){
+      return{
+        showSoundPlay, ShowSetBadge, showAlert
+      }
+    }
+  })
+}
+
+3. addNotificationReceivedListener
